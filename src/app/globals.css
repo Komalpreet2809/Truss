@@ -9,6 +9,7 @@
   --bg-blob-alt: #d7d0c4;
   --bg-white: #f7f2e9;
   --bg-card: #f2ece2;
+  --bg-highlight: #f5e6e2;
 
   --border-subtle: rgba(58, 54, 50, 0.07);
   --border-default: rgba(58, 54, 50, 0.12);
@@ -18,6 +19,7 @@
   --accent-blue: #bcc9d5;
   --accent-blue-soft: rgba(188, 201, 213, 0.24);
   --accent-charcoal: #3a3632;
+  --accent-highlight: #f5e6e2;
 
   --text-primary: #3a3632;
   --text-secondary: #6d665f;
@@ -27,6 +29,34 @@
   --font-serif: "DM Serif Display", "Georgia", serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", "Consolas", monospace;
+
+  --background: var(--bg-base);
+  --foreground: var(--text-primary);
+}
+
+.dark {
+  --bg-base: #342d27;
+  --bg-warm: #2d2621;
+  --bg-blob: #403731;
+  --bg-blob-alt: #473d37;
+  --bg-white: #433a34;
+  --bg-card: #3b332d;
+  --bg-highlight: rgba(223, 145, 121, 0.12);
+
+  --border-subtle: rgba(237, 224, 212, 0.08);
+  --border-default: rgba(237, 224, 212, 0.14);
+
+  --accent-coral: #e7a18e;
+  --accent-coral-soft: rgba(231, 161, 142, 0.14);
+  --accent-blue: #b6c6d4;
+  --accent-blue-soft: rgba(182, 198, 212, 0.16);
+  --accent-charcoal: #ede0d4;
+  --accent-highlight: rgba(231, 161, 142, 0.14);
+
+  --text-primary: #ede0d4;
+  --text-secondary: #d3c5b8;
+  --text-muted: #ad9f91;
+  --text-faint: #7f7165;
 
   --background: var(--bg-base);
   --foreground: var(--text-primary);
@@ -66,6 +96,9 @@ textarea, select, button, input { font: inherit; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(42,42,42,0.1); border-radius: 999px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(42,42,42,0.18); }
+
+.dark ::-webkit-scrollbar-thumb { background: rgba(220,200,180,0.12); }
+.dark ::-webkit-scrollbar-thumb:hover { background: rgba(220,200,180,0.22); }
 
 /* ─── Typography ─── */
 .font-serif { font-family: var(--font-serif); }

@@ -46,30 +46,46 @@ function verdictInfo(v: VerificationReport["verdict"]) {
   return { color: "var(--accent-charcoal)", icon: "↻", bg: "var(--bg-card)" };
 }
 
-function domainIcon(cat: string) {
+function domainIcon(cat: string, color: string) {
   if (cat === "shell")
     return (
-      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#5c5650" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="4 17 10 11 4 5" /><line x1="12" y1="19" x2="20" y2="19" />
       </svg>
     );
   if (cat === "sql")
     return (
-      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#5c5650" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
         <ellipse cx="12" cy="5" rx="9" ry="3" /><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5" /><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3" />
       </svg>
     );
   if (cat === "python")
     return (
-      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#5c5650" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10" /><path d="M8 12l2 2 4-4" />
       </svg>
     );
   return (
-    <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#5c5650" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
     </svg>
   );
+}
+
+function scenarioCardStyle(selected: boolean): React.CSSProperties {
+  if (selected) {
+    return {
+      background: "var(--accent-coral-soft)",
+      border: "1px solid rgba(231, 161, 142, 0.28)",
+      boxShadow: "0 12px 28px rgba(0, 0, 0, 0.16), inset 0 0 0 1px rgba(255,255,255,0.03)",
+    };
+  }
+
+  return {
+    background: "rgba(255,255,255,0.04)",
+    border: "1px solid var(--border-default)",
+    boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.02)",
+  };
 }
 
 function nodeStyle(s: NodeStatus) {
@@ -168,8 +184,20 @@ function CodeFrame({
       <div className="max-h-56 overflow-auto px-3 py-2 font-mono text-sm leading-7" style={{ color: "var(--text-primary)" }}>
         {lines.map((line, i) => {
           const ln = i + 1;
+          const isHighlighted = hl.has(ln);
           return (
-            <div key={`${title}-${ln}`} className={`grid grid-cols-[2rem_1fr] gap-2 rounded-md px-1.5 py-0.5 transition-colors duration-200 ${hl.has(ln) ? "bg-[#f5e6e2]" : "hover:bg-[var(--bg-warm)]/30"}`}>
+            <div
+              key={`${title}-${ln}`}
+              className={`grid grid-cols-[2rem_1fr] gap-2 rounded-md px-1.5 py-0.5 transition-colors duration-200 ${isHighlighted ? "" : "hover:bg-[var(--bg-warm)]/30"}`}
+              style={
+                isHighlighted
+                  ? {
+                      background: "var(--bg-highlight)",
+                      boxShadow: "inset 0 0 0 1px var(--accent-coral-soft)",
+                    }
+                  : undefined
+              }
+            >
               <span className="text-right text-xs" style={{ color: "var(--text-faint)" }}>{fmtLine(ln)}</span>
               <span className="whitespace-pre-wrap break-words">{line || " "}</span>
             </div>
@@ -329,26 +357,44 @@ export function VerificationWorkspace() {
 
   /* ─── Render ─── */
   return (
-    <div className="mx-auto flex w-full max-w-[1100px] flex-col px-5 pb-24 pt-8 lg:px-8">
+    <div className="relative mx-auto flex w-full max-w-[1100px] flex-col px-5 pb-24 pt-8 lg:px-8">
 
       {/* ═══ HEADER ═══ */}
       <header className="flex items-start justify-between">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-2xl" style={{ background: "var(--bg-blob)" }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="rgba(58, 54, 50, 0.08)" />
-              <path d="M8 8h8M12 8v8M10 16h4M8 8v1.5M16 8v1.5" />
-            </svg>
+            <span
+              className="h-5 w-5"
+              style={{
+                background: "var(--text-primary)",
+                WebkitMaskImage: "url('/truss-mark.svg')",
+                maskImage: "url('/truss-mark.svg')",
+                WebkitMaskRepeat: "no-repeat",
+                maskRepeat: "no-repeat",
+                WebkitMaskPosition: "center",
+                maskPosition: "center",
+                WebkitMaskSize: "contain",
+                maskSize: "contain",
+              }}
+              aria-hidden="true"
+            />
           </div>
           <div>
-            <span className="font-serif text-lg" style={{ color: "var(--text-primary)" }}>TRUSS</span>
+            <span
+              className="text-[1.15rem] font-semibold uppercase tracking-[0.08em]"
+              style={{ color: "var(--text-primary)" }}
+            >
+              TRUSS
+            </span>
             <p className="text-[9px] uppercase tracking-[0.3em]" style={{ color: "var(--text-faint)" }}>Safety Verification</p>
           </div>
         </div>
-        <div className="hidden max-w-[200px] text-right sm:block">
-          <p className="text-[11px] leading-relaxed" style={{ color: "var(--text-muted)" }}>
-            An AI safety verification layer that intercepts outputs, synthesizes grammars, and returns explainable verdicts.
-          </p>
+        <div className="flex items-center gap-4">
+          <div className="hidden max-w-[200px] text-right sm:block">
+            <p className="text-[11px] leading-relaxed" style={{ color: "var(--text-muted)" }}>
+              An AI safety verification layer that intercepts outputs, synthesizes grammars, and returns explainable verdicts.
+            </p>
+          </div>
         </div>
       </header>
 
@@ -382,10 +428,16 @@ export function VerificationWorkspace() {
                 onClick={() => pick(s.id)}
                 className="group flex flex-col items-center gap-3 transition-transform duration-300 hover:scale-105 active:scale-95"
               >
-                <div className={`rounded-2xl p-4 transition-all duration-500 ${
-                  s.id === selId ? "bg-white/60 shadow-md scenario-btn-active" : "bg-white/30 hover:bg-white/50"
-                }`}>
-                  {domainIcon(s.category)}
+                <div
+                  className={`rounded-[1.7rem] p-4 transition-all duration-500 group-hover:-translate-y-0.5 ${
+                    s.id === selId ? "scenario-btn-active" : ""
+                  }`}
+                  style={scenarioCardStyle(s.id === selId)}
+                >
+                  {domainIcon(
+                    s.category,
+                    s.id === selId ? "var(--accent-coral)" : "var(--text-secondary)",
+                  )}
                 </div>
                 {s.id === selId && (
                   <svg className="animate-pop-in" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-coral)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -687,7 +739,14 @@ export function VerificationWorkspace() {
                 className="motion-slide-up"
                 illustration={
                   <div className="flex flex-col items-center justify-center">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/40 shadow-sm animate-spin-slow hover:scale-110 transition-transform duration-300">
+                    <div
+                      className="flex h-16 w-16 items-center justify-center rounded-full animate-spin-slow transition-transform duration-300 hover:scale-110"
+                      style={{
+                        background: "rgba(255,255,255,0.04)",
+                        border: "1px solid var(--border-default)",
+                        boxShadow: "0 12px 28px rgba(0, 0, 0, 0.16), inset 0 0 0 1px rgba(255,255,255,0.02)",
+                      }}
+                    >
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-coral)" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
                         <polyline points="23 4 23 10 17 10" /><polyline points="1 20 1 14 7 14" /><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
                       </svg>
@@ -704,7 +763,7 @@ export function VerificationWorkspace() {
                     <span>View Prompt Context</span>
                   </summary>
                   <div className="mt-2 border-l-2 pl-3 italic leading-relaxed" style={{ borderColor: "var(--border-default)" }}>
-                    "{report.refinement.prompt}"
+                    &quot;{report.refinement.prompt}&quot;
                   </div>
                 </details>
 
