@@ -102,15 +102,22 @@ function BlobSection({
   blobVariant = "blob",
   children,
   illustration,
+  className = "",
+  style = {},
 }: {
   number: string;
   reverse?: boolean;
   blobVariant?: "blob" | "blob-alt" | "blob-soft" | "blob-wide";
   children: React.ReactNode;
   illustration?: React.ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
 }) {
   return (
-    <div className={`relative flex flex-col gap-6 py-8 md:py-12 ${reverse ? "md:flex-row-reverse" : "md:flex-row"} md:items-center md:gap-12`}>
+    <div 
+      className={`relative flex flex-col gap-6 py-8 md:py-12 ${reverse ? "md:flex-row-reverse" : "md:flex-row"} md:items-center md:gap-12 ${className}`}
+      style={style}
+    >
       {/* Blob with illustration */}
       <div className="relative flex flex-shrink-0 items-center justify-center md:w-[44%]">
         <div className={`${blobVariant} motion-blob flex h-64 w-full max-w-sm items-center justify-center p-10 md:h-80`}>
@@ -134,28 +141,35 @@ function CodeFrame({
   code,
   title,
   highlightedLines = [],
+  isScanning = false,
 }: {
   code: string;
   title: string;
   highlightedLines?: number[];
+  isScanning?: boolean;
 }) {
   const lines = code.replace(/\r\n/g, "\n").split("\n");
   const hl = new Set(highlightedLines);
   return (
-    <div className="overflow-hidden rounded-xl border" style={{ borderColor: "var(--border-default)", background: "var(--bg-white)" }}>
+    <div className="relative overflow-hidden rounded-xl border" style={{ borderColor: "var(--border-default)", background: "var(--bg-white)" }}>
+      {isScanning && (
+        <div 
+          className="absolute left-0 right-0 top-0 z-10 h-0.5 bg-gradient-to-r from-transparent via-[var(--accent-coral)] to-transparent opacity-80 animate-sweep-down pointer-events-none"
+        />
+      )}
       <div className="flex items-center justify-between border-b px-4 py-2" style={{ borderColor: "var(--border-subtle)" }}>
         <SLabel>{title}</SLabel>
         <div className="flex gap-1.5">
-          <span className="h-2 w-2 rounded-full opacity-50" style={{ background: "var(--accent-coral)" }} />
-          <span className="h-2 w-2 rounded-full opacity-50" style={{ background: "var(--accent-blue)" }} />
-          <span className="h-2 w-2 rounded-full opacity-50" style={{ background: "var(--accent-charcoal)" }} />
+          <span className="h-2 w-2 rounded-full opacity-50 transition-transform duration-300 hover:scale-125" style={{ background: "var(--accent-coral)" }} />
+          <span className="h-2 w-2 rounded-full opacity-50 transition-transform duration-300 hover:scale-125" style={{ background: "var(--accent-blue)" }} />
+          <span className="h-2 w-2 rounded-full opacity-50 transition-transform duration-300 hover:scale-125" style={{ background: "var(--accent-charcoal)" }} />
         </div>
       </div>
       <div className="max-h-56 overflow-auto px-3 py-2 font-mono text-sm leading-7" style={{ color: "var(--text-primary)" }}>
         {lines.map((line, i) => {
           const ln = i + 1;
           return (
-            <div key={`${title}-${ln}`} className={`grid grid-cols-[2rem_1fr] gap-2 rounded-md px-1.5 py-0.5 ${hl.has(ln) ? "bg-[#f5e6e2]" : ""}`}>
+            <div key={`${title}-${ln}`} className={`grid grid-cols-[2rem_1fr] gap-2 rounded-md px-1.5 py-0.5 transition-colors duration-200 ${hl.has(ln) ? "bg-[#f5e6e2]" : "hover:bg-[var(--bg-warm)]/30"}`}>
               <span className="text-right text-xs" style={{ color: "var(--text-faint)" }}>{fmtLine(ln)}</span>
               <span className="whitespace-pre-wrap break-words">{line || " "}</span>
             </div>
@@ -205,16 +219,16 @@ function Expandable({
   children: React.ReactNode;
 }) {
   return (
-    <div className="overflow-hidden rounded-xl border" style={{ borderColor: "var(--border-subtle)", background: "var(--bg-card)" }}>
+    <div className="overflow-hidden rounded-xl border interactive-hover-card" style={{ borderColor: "var(--border-subtle)", background: "var(--bg-card)" }}>
       <button
         type="button"
         onClick={onToggle}
         className="flex w-full items-center justify-between px-5 py-4 text-left transition-colors hover:bg-[var(--bg-warm)]"
       >
         <div className="flex items-center gap-2.5">
-          <span className="font-serif text-base" style={{ color: "var(--text-primary)" }}>{title}</span>
+          <span className="font-serif text-base transition-colors duration-300 hover:text-[var(--accent-coral)]" style={{ color: "var(--text-primary)" }}>{title}</span>
           {badge && (
-            <span className="rounded-md px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest"
+            <span className="rounded-md px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest transition-transform duration-300 hover:scale-105"
               style={{ background: "var(--accent-coral-soft)", color: "var(--accent-coral)" }}
             >{badge}</span>
           )}
@@ -360,19 +374,21 @@ export function VerificationWorkspace() {
             number={pad(i)}
             reverse={i % 2 !== 0}
             blobVariant={blobs[i % blobs.length]}
+            className="motion-slide-up"
+            style={{ animationDelay: `${i * 120}ms` }}
             illustration={
               <button
                 type="button"
                 onClick={() => pick(s.id)}
-                className="group flex flex-col items-center gap-3 transition-transform duration-300 hover:scale-105"
+                className="group flex flex-col items-center gap-3 transition-transform duration-300 hover:scale-105 active:scale-95"
               >
-                <div className={`rounded-2xl p-4 transition-all duration-300 ${
-                  s.id === selId ? "bg-white/60 shadow-md" : "bg-white/30"
+                <div className={`rounded-2xl p-4 transition-all duration-500 ${
+                  s.id === selId ? "bg-white/60 shadow-md scenario-btn-active" : "bg-white/30 hover:bg-white/50"
                 }`}>
                   {domainIcon(s.category)}
                 </div>
                 {s.id === selId && (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-coral)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <svg className="animate-pop-in" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-coral)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polygon points="5 3 19 12 5 21 5 3" />
                   </svg>
                 )}
@@ -384,14 +400,14 @@ export function VerificationWorkspace() {
               {s.description}
             </p>
             <div className="flex items-center gap-2">
-              <span className="rounded-md border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest"
+              <span className="rounded-md border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest transition-colors duration-300 hover:border-[var(--accent-coral)]/30 hover:bg-white/40"
                 style={{ borderColor: "var(--border-default)", color: "var(--text-muted)" }}
               >{s.category}</span>
               <span className="text-xs" style={{ color: "var(--text-faint)" }}>•</span>
               <span className="text-[10px]" style={{ color: "var(--text-faint)" }}>{s.mode}</span>
             </div>
             {s.id === selId && (
-              <span className="mt-1 inline-block rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest"
+              <span className="mt-1 inline-block rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest animate-pop-in"
                 style={{ background: "var(--accent-coral-soft)", color: "var(--accent-coral)" }}
               >
                 selected
@@ -447,7 +463,7 @@ export function VerificationWorkspace() {
                 type="button"
                 onClick={() => startTransition(() => { void run(); })}
                 disabled={isPending}
-                className="relative overflow-hidden rounded-full px-6 py-2.5 text-sm font-semibold text-white transition-all hover:shadow-[0_4px_20px_rgba(212,132,106,0.25)] disabled:opacity-50"
+                className="relative overflow-hidden rounded-full px-6 py-2.5 text-sm font-semibold text-white transition-all hover:scale-105 active:scale-95 hover:shadow-[0_4px_20px_rgba(212,132,106,0.25)] disabled:opacity-50"
                 style={{ background: "var(--accent-coral)" }}
               >
                 {isPending ? (
@@ -457,13 +473,13 @@ export function VerificationWorkspace() {
                   </span>
                 ) : "Run verification"}
               </button>
-              <span className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest" style={{ color: "var(--text-faint)" }}>
+              <span className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest animate-pulse-subtle" style={{ color: "var(--text-faint)" }}>
                 <span className="h-1.5 w-1.5 rounded-full motion-glow" style={{ background: "var(--accent-blue)" }} />
                 active
               </span>
             </div>
             {error && (
-              <div className="rounded-lg border px-4 py-3 text-sm" style={{ borderColor: "var(--accent-coral)", background: "var(--accent-coral-soft)", color: "var(--text-primary)" }}>
+              <div className="rounded-lg border px-4 py-3 text-sm animate-pop-in" style={{ borderColor: "var(--accent-coral)", background: "var(--accent-coral-soft)", color: "var(--text-primary)" }}>
                 {error}
               </div>
             )}
@@ -471,16 +487,24 @@ export function VerificationWorkspace() {
 
           {/* Right: code + metrics */}
           <div className="space-y-4">
-            <CodeFrame code={modelOutput} title="Code Preview" highlightedLines={hlLines} />
+            <CodeFrame code={modelOutput} title="Code Preview" highlightedLines={hlLines} isScanning={isPending} />
             <div className="grid grid-cols-3 gap-3">
               {[
                 { label: "Domain", val: live.domain },
                 { label: "Confidence", val: prettyPercent(report?.confidence ?? live.confidence) },
                 { label: "Risk", val: report?.riskLevel ?? live.riskLevel },
-              ].map((m) => (
-                <div key={m.label} className="rounded-xl border px-3 py-3 text-center" style={{ borderColor: "var(--border-subtle)", background: "var(--bg-card)" }}>
+              ].map((m, idx) => (
+                <div 
+                  key={m.label} 
+                  className={`rounded-xl border px-3 py-3 text-center interactive-hover-stat motion-card ${isPending ? "animate-pulse-subtle" : ""}`} 
+                  style={{ 
+                    borderColor: "var(--border-subtle)", 
+                    background: "var(--bg-card)",
+                    animationDelay: `${idx * 80}ms`
+                  }}
+                >
                   <SLabel>{m.label}</SLabel>
-                  <p className="mt-1 font-serif text-lg" style={{ color: "var(--text-primary)" }}>{m.val}</p>
+                  <p className="mt-1 font-serif text-lg transition-transform duration-300 group-hover:scale-105" style={{ color: "var(--text-primary)" }}>{m.val}</p>
                 </div>
               ))}
             </div>
@@ -499,9 +523,10 @@ export function VerificationWorkspace() {
               number="06"
               reverse={false}
               blobVariant="blob-wide"
+              className="motion-slide-up"
               illustration={
-                <div className="flex flex-col items-center gap-2">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full text-2xl font-bold text-white"
+                <div className="flex flex-col items-center gap-2 animate-pop-in">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full text-2xl font-bold text-white transition-transform duration-300 hover:rotate-12"
                     style={{ background: vi.color }}
                   >{vi.icon}</div>
                   <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
@@ -511,7 +536,7 @@ export function VerificationWorkspace() {
               }
             >
               <SLabel>Final Verdict</SLabel>
-              <h2 className="text-section" style={{ color: vi.color }}>{verdictLabel(report.verdict)}</h2>
+              <h2 className="text-section transition-colors duration-300" style={{ color: vi.color }}>{verdictLabel(report.verdict)}</h2>
               <p className="text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>{report.summary}</p>
             </BlobSection>
           </section>
@@ -523,8 +548,16 @@ export function VerificationWorkspace() {
               { l: "Schema", v: report.proofArtifact.schema },
               { l: "AST Nodes", v: report.proofArtifact.astNodeCount },
               { l: "Tokens", v: report.proofArtifact.tokenCount },
-            ].map((s) => (
-              <div key={s.l} className="rounded-xl border px-4 py-4" style={{ borderColor: "var(--border-subtle)", background: "var(--bg-card)" }}>
+            ].map((s, idx) => (
+              <div 
+                key={s.l} 
+                className="rounded-xl border px-4 py-4 interactive-hover-stat motion-card" 
+                style={{ 
+                  borderColor: "var(--border-subtle)", 
+                  background: "var(--bg-card)",
+                  animationDelay: `${idx * 60}ms`
+                }}
+              >
                 <SLabel>{s.l}</SLabel>
                 <p className="mt-2 break-all font-mono text-sm font-semibold tracking-tight" style={{ color: "var(--text-primary)" }}>
                   {s.v ?? "—"}
@@ -651,9 +684,10 @@ export function VerificationWorkspace() {
           {report.refinement && (
             <section className="mt-10">
               <BlobSection number="07" reverse={true} blobVariant="blob-alt"
+                className="motion-slide-up"
                 illustration={
                   <div className="flex flex-col items-center justify-center">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/40 shadow-sm animate-spin-slow">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/40 shadow-sm animate-spin-slow hover:scale-110 transition-transform duration-300">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-coral)" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
                         <polyline points="23 4 23 10 17 10" /><polyline points="1 20 1 14 7 14" /><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
                       </svg>
@@ -690,7 +724,7 @@ export function VerificationWorkspace() {
                   <button
                     type="button"
                     onClick={refine}
-                    className="relative overflow-hidden rounded-full px-6 py-2.5 text-sm font-semibold text-white transition-all hover:shadow-[0_4px_16px_rgba(212,132,106,0.25)]"
+                    className="relative overflow-hidden rounded-full px-6 py-2.5 text-sm font-semibold text-white transition-all hover:scale-105 active:scale-95 hover:shadow-[0_4px_16px_rgba(212,132,106,0.25)]"
                     style={{ background: "var(--accent-coral)" }}
                   >
                     Initiate Refinement
