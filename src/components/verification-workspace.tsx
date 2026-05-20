@@ -496,7 +496,7 @@ export function VerificationWorkspace() {
           {/* Verdict blob section */}
           <section className="mt-14">
             <BlobSection
-              number="04"
+              number="06"
               reverse={false}
               blobVariant="blob-wide"
               illustration={
@@ -650,7 +650,7 @@ export function VerificationWorkspace() {
           {/* ═══ REFINEMENT ═══ */}
           {report.refinement && (
             <section className="mt-10">
-              <BlobSection number="05" reverse={true} blobVariant="blob-alt"
+              <BlobSection number="07" reverse={true} blobVariant="blob-alt"
                 illustration={
                   <div className="flex flex-col items-center justify-center">
                     <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/40 shadow-sm animate-spin-slow">
