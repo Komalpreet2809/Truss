@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TRUSS
 
-## Getting Started
+TRUSS is a modern prototype for an AI safety verification layer. Instead of trusting model output directly, it intercepts candidate outputs, detects the domain, synthesizes a domain-specific safety grammar, evaluates constraints, and returns an explainable verdict before anything is accepted or executed.
 
-First, run the development server:
+## Stack
+
+- Next.js 16 App Router
+- React 19
+- TypeScript 5
+- Tailwind CSS 4
+- Route-handler API for programmatic verification
+
+## What the MVP does
+
+- Accepts a user prompt plus AI-generated output
+- Detects whether the candidate looks like `shell`, `SQL`, `Python`, or `general`
+- Synthesizes a safety grammar for the detected domain
+- Evaluates explainable constraints such as destructive shell commands, mutating SQL, shell delegation, or filesystem mutation
+- Returns `accept`, `reject`, or `refine` with a verification trace
+
+## Project structure
+
+```text
+src/
+  app/
+    api/verify/route.ts      # Verification API
+    globals.css              # Design tokens and shared styles
+    layout.tsx               # App metadata and root shell
+    page.tsx                 # Landing page
+  components/
+    verification-workspace.tsx
+  lib/
+    safety/
+      domain.ts              # Domain detection
+      policy.ts              # Dynamic grammar synthesis
+      types.ts               # Shared types
+      verifier.ts            # Constraint evaluation and decision engine
+```
+
+## Running locally
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## API example
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`POST /api/verify`
 
-## Learn More
+```json
+{
+  "userPrompt": "Generate SQL for active employees in engineering.",
+  "modelOutput": "SELECT employee_id, full_name FROM employees WHERE department = 'Engineering';",
+  "mode": "strict"
+}
+```
 
-To learn more about Next.js, take a look at the following resources:
+Example response shape:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```json
+{
+  "verdict": "accept",
+  "domain": "sql",
+  "riskLevel": "medium",
+  "summary": "Verified as a sql output with no blocking constraint failures."
+}
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Next extensions
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Replace heuristic parsing with AST-backed parsers for each domain
+- Add organizational policy packs and tenant-aware rules
+- Introduce repair loops that regenerate safer outputs automatically
+- Persist verification events for audit trails and governance dashboards

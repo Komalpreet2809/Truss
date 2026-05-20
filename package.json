@@ -1,5 +1,5 @@
 {
-  "name": "ai-safety-verifier",
+  "name": "truss",
   "version": "0.1.0",
   "private": true,
   "scripts": {
