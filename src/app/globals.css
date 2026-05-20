@@ -13,8 +13,8 @@
   --border-subtle: rgba(58, 54, 50, 0.07);
   --border-default: rgba(58, 54, 50, 0.12);
 
-  --accent-coral: #f08f82;
-  --accent-coral-soft: rgba(240, 143, 130, 0.14);
+  --accent-coral: #d4846a;
+  --accent-coral-soft: rgba(212, 132, 106, 0.14);
   --accent-blue: #bcc9d5;
   --accent-blue-soft: rgba(188, 201, 213, 0.24);
   --accent-charcoal: #3a3632;
@@ -164,10 +164,6 @@ textarea, select, button, input { font: inherit; }
   100% { transform: translateX(200%); }
 }
 
-@keyframes sparkle {
-  0%, 100% { opacity: 0.3; transform: scale(1) rotate(0deg); }
-  50% { opacity: 1; transform: scale(1.15) rotate(12deg); }
-}
 
 @keyframes morph-blob {
   0%, 100% { border-radius: 42% 58% 62% 38% / 48% 42% 58% 52%; }
@@ -177,6 +173,12 @@ textarea, select, button, input { font: inherit; }
 }
 
 /* ─── Animation utilities ─── */
+@keyframes spin-slow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.animate-spin-slow { animation: spin-slow 16s linear infinite; }
+
 .motion-float { animation: float 8s ease-in-out infinite; }
 .motion-float-slow { animation: float-slow 14s ease-in-out infinite; }
 .motion-glow { animation: glow-pulse 2.4s ease-in-out infinite; }
@@ -184,7 +186,7 @@ textarea, select, button, input { font: inherit; }
 .motion-fade { animation: fade-in 0.5s ease both; }
 .motion-slide-up { animation: slide-up 0.65s cubic-bezier(0.22, 1, 0.36, 1) both; }
 .motion-card { animation: card-enter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both; }
-.motion-sparkle { animation: sparkle 3s ease-in-out infinite; }
+
 .motion-blob { animation: morph-blob 20s ease-in-out infinite; }
 
 /* ─── Scan sheen ─── */
@@ -202,3 +204,7 @@ textarea, select, button, input { font: inherit; }
   height: 1px;
   background: var(--border-default);
 }
+
+/* ─── Summary details marker resets ─── */
+summary::-webkit-details-marker { display: none; }
+summary { list-style: none; }

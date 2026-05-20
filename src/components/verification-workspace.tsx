@@ -89,9 +89,7 @@ function constraintColor(c: ConstraintOutcome) {
    Sub-components
    ────────────────────────────────────────────────── */
 
-function Sparkle({ className = "" }: { className?: string }) {
-  return <span className={`inline-block motion-sparkle ${className}`} style={{ color: "var(--text-faint)" }}>✦</span>;
-}
+
 
 function SLabel({ children }: { children: React.ReactNode }) {
   return <p className="text-[10px] font-semibold uppercase tracking-[0.25em]" style={{ color: "var(--text-muted)" }}>{children}</p>;
@@ -214,7 +212,6 @@ function Expandable({
         className="flex w-full items-center justify-between px-5 py-4 text-left transition-colors hover:bg-[var(--bg-warm)]"
       >
         <div className="flex items-center gap-2.5">
-          <Sparkle className="text-[10px]" />
           <span className="font-serif text-base" style={{ color: "var(--text-primary)" }}>{title}</span>
           {badge && (
             <span className="rounded-md px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest"
@@ -325,7 +322,8 @@ export function VerificationWorkspace() {
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-2xl" style={{ background: "var(--bg-blob)" }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="rgba(58, 54, 50, 0.08)" />
+              <path d="M8 8h8M12 8v8M10 16h4M8 8v1.5M16 8v1.5" />
             </svg>
           </div>
           <div>
@@ -340,11 +338,11 @@ export function VerificationWorkspace() {
         </div>
       </header>
 
-      {/* ═══ DECORATIVE DOTS ═══ */}
-      <div className="mt-8 flex justify-center gap-1.5">
-        <span className="h-1.5 w-1.5 rounded-full" style={{ background: "var(--text-faint)" }} />
-        <span className="h-1.5 w-1.5 rounded-full" style={{ background: "var(--text-faint)" }} />
-        <span className="h-1.5 w-1.5 rounded-full" style={{ background: "var(--text-faint)" }} />
+      {/* ═══ DECORATIVE DIVIDER ═══ */}
+      <div className="mt-8 flex items-center justify-center gap-3.5">
+        <div className="h-[1px] w-12" style={{ background: "var(--border-default)" }} />
+        <span className="text-xs" style={{ color: "var(--text-faint)" }}>•</span>
+        <div className="h-[1px] w-12" style={{ background: "var(--border-default)" }} />
       </div>
 
       {/* ═══ HERO ═══ */}
@@ -389,7 +387,7 @@ export function VerificationWorkspace() {
               <span className="rounded-md border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest"
                 style={{ borderColor: "var(--border-default)", color: "var(--text-muted)" }}
               >{s.category}</span>
-              <Sparkle className="text-[9px]" />
+              <span className="text-xs" style={{ color: "var(--text-faint)" }}>•</span>
               <span className="text-[10px]" style={{ color: "var(--text-faint)" }}>{s.mode}</span>
             </div>
             {s.id === selId && (
@@ -528,7 +526,7 @@ export function VerificationWorkspace() {
             ].map((s) => (
               <div key={s.l} className="rounded-xl border px-4 py-4" style={{ borderColor: "var(--border-subtle)", background: "var(--bg-card)" }}>
                 <SLabel>{s.l}</SLabel>
-                <p className="mt-2 break-all text-lg font-bold tracking-tight" style={{ color: "var(--text-primary)" }}>
+                <p className="mt-2 break-all font-mono text-sm font-semibold tracking-tight" style={{ color: "var(--text-primary)" }}>
                   {s.v ?? "—"}
                 </p>
               </div>
@@ -654,28 +652,49 @@ export function VerificationWorkspace() {
             <section className="mt-10">
               <BlobSection number="05" reverse={true} blobVariant="blob-alt"
                 illustration={
-                  <div className="flex flex-col items-center gap-3">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--accent-coral)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="23 4 23 10 17 10" /><polyline points="1 20 1 14 7 14" /><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-                    </svg>
-                    <button
-                      type="button"
-                      onClick={refine}
-                      className="rounded-full px-5 py-2 text-sm font-semibold text-white transition-all hover:shadow-[0_4px_16px_rgba(212,132,106,0.2)]"
-                      style={{ background: "var(--accent-coral)" }}
-                    >Initiate Refinement</button>
+                  <div className="flex flex-col items-center justify-center">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/40 shadow-sm animate-spin-slow">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-coral)" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="23 4 23 10 17 10" /><polyline points="1 20 1 14 7 14" /><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                      </svg>
+                    </div>
                   </div>
                 }
               >
                 <SLabel>Auto-Refinement Loop</SLabel>
-                <h3 className="text-section">{report.refinement.prompt}</h3>
-                <CodeFrame code={report.refinement.candidate} title="Refined Candidate" />
-                <div className="space-y-2">
+                <h3 className="text-section">Suggested Refinement</h3>
+                
+                <details className="group mt-2 text-xs" style={{ color: "var(--text-muted)" }}>
+                  <summary className="flex cursor-pointer select-none list-none items-center gap-1 font-semibold outline-none transition-colors hover:text-[var(--accent-coral)]">
+                    <span className="inline-block transition-transform duration-200 group-open:rotate-90">▸</span>
+                    <span>View Prompt Context</span>
+                  </summary>
+                  <div className="mt-2 border-l-2 pl-3 italic leading-relaxed" style={{ borderColor: "var(--border-default)" }}>
+                    "{report.refinement.prompt}"
+                  </div>
+                </details>
+
+                <div className="space-y-1.5 py-1">
                   {report.refinement.rationale.map((r, i) => (
-                    <div key={r} className="motion-card rounded-md border px-3 py-2 text-sm"
+                    <div key={r} className="motion-card rounded-md border px-3 py-2 text-xs"
                       style={{ animationDelay: `${i * 50}ms`, borderColor: "var(--border-subtle)", background: "var(--bg-white)", color: "var(--text-secondary)" }}
-                    >{r}</div>
+                    >
+                      ✓ {r}
+                    </div>
                   ))}
+                </div>
+
+                <CodeFrame code={report.refinement.candidate} title="Refined Candidate" />
+
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={refine}
+                    className="relative overflow-hidden rounded-full px-6 py-2.5 text-sm font-semibold text-white transition-all hover:shadow-[0_4px_16px_rgba(212,132,106,0.25)]"
+                    style={{ background: "var(--accent-coral)" }}
+                  >
+                    Initiate Refinement
+                  </button>
                 </div>
               </BlobSection>
             </section>
@@ -691,10 +710,10 @@ export function VerificationWorkspace() {
             TRUSS · Safety Verification
           </span>
         </div>
-        <div className="flex gap-1.5">
-          <span className="h-1.5 w-1.5 rounded-full" style={{ background: "var(--text-faint)" }} />
-          <span className="h-1.5 w-1.5 rounded-full" style={{ background: "var(--text-faint)" }} />
-          <span className="h-1.5 w-1.5 rounded-full" style={{ background: "var(--text-faint)" }} />
+        <div className="flex items-center gap-3">
+          <div className="h-[1px] w-8" style={{ background: "var(--border-default)" }} />
+          <span className="text-[10px]" style={{ color: "var(--text-faint)" }}>•</span>
+          <div className="h-[1px] w-8" style={{ background: "var(--border-default)" }} />
         </div>
       </footer>
     </div>
